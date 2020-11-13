@@ -319,8 +319,6 @@ NSRunloop暴露给外界的接口
 
 
 > 下面提供了两套代码，简化版与非简化版，如果觉得非简化版代码太长可以直接看简化版的代码，他们所表达的含义是一样的。
->
-> 
 
 ##### 简化版代码（来源于网上）
 
@@ -896,8 +894,6 @@ CFRunLoop是基于pthread来管理。iOS中不能直接创建Runloop，只能从
 
 系统一共提供了如下几种方式，区别在于面向的框架不一样：
 
-
-
 ```objectivec
 CFRunLoopRef CFRunLoopGetCurrent(void);//获取当前线程的RunLoop对象
 CFRunLoopRef CFRunLoopGetMain(void);//获取主线程的RunLoop对象
@@ -906,8 +902,6 @@ CFRunLoopRef CFRunLoopGetMain(void);//获取主线程的RunLoop对象
 ```
 
 ##### 获取当前线程
-
-
 
 ```c
 //取当前所在线程的RunLoop
@@ -923,8 +917,6 @@ CFRunLoopRef CFRunLoopGetCurrent(void) {
 在CFRunLoopGetCurrent函数内部调用了_CFRunLoopGet0()，传入的参数是当前线程（`eturn _CFRunLoopGet0(pthread_self());`）。这里可以看出，CFRunLoopGetCurrent函数必须要在线程内部调用，才能获取当前线程的RunLoop。也就是说子线程的RunLoop必须要在子线程内部获取。
 
 ##### CFRunLoopGetMain
-
-
 
 ```objectivec
 //取主线程的RunLoop
@@ -942,8 +934,6 @@ CFRunLoopRef CFRunLoopGetMain(void) {
 ##### CFRunLoopGet0
 
 获取当前的及主线程的runloop最终都是调用CFRunLoopGet0来实现的。
-
-
 
 ```c
 //全局的Dictionary，key 是 pthread_t， value 是 CFRunLoopRef
@@ -1033,8 +1023,6 @@ CFArrayRef CFRunLoopCopyAllModes(CFRunLoopRef rl)//返回当前RunLoop的所有m
 
 ##### CFRunLoopAddCommonMode
 
-
-
 ```c
 void CFRunLoopAddCommonMode(CFRunLoopRef rl, CFStringRef modeName) {
     CHECK_FOR_FORK();
@@ -1070,8 +1058,6 @@ CFRunLoopCopyCurrentMode/CFRunLoopCopyAllModes实现比较简单，直接返回�
 
 系统提供了如下几个函数来操作Item
 
-
-
 ```c
 CF_EXPORT Boolean CFRunLoopContainsSource(CFRunLoopRef rl, CFRunLoopSourceRef source, CFRunLoopMode mode);
 CF_EXPORT void CFRunLoopAddSource(CFRunLoopRef rl, CFRunLoopSourceRef source, CFRunLoopMode mode);
@@ -1091,8 +1077,6 @@ CF_EXPORT void CFRunLoopRemoveTimer(CFRunLoopRef rl, CFRunLoopTimerRef timer, CF
 ##### CFRunLoopAddSource
 
 作用：将一个CFRunLoopAddSource对象添加到一个指定的Runloop Model中。
-
-
 
 ```c
 //添加source事件
@@ -1186,8 +1170,6 @@ void CFRunLoopAddSource(CFRunLoopRef rl, CFRunLoopSourceRef rls, CFStringRef mod
 ##### CFRunLoopRemoveSource
 
 remove操作和add操作的逻辑基本一致，很容易理解
-
-
 
 ```c
 //移除source
@@ -1289,8 +1271,6 @@ static void __CFRunLoopAddItemToCommonModes(const void *value, void *ctx) {
 
 首先把之前的runloop执行过程中的函数使用长函数名改一下，这样便于在实际调试中便于分析。因为在真实debug时不会出现上面的函数名，而是通过长函数名代替，在源码中也能看到之前的函数名和这里的长函数名是同一个函数。
 
-
-
 ```c
 {
     /// 1. 通知Observers，即将进入RunLoop
@@ -1303,7 +1283,7 @@ static void __CFRunLoopAddItemToCommonModes(const void *value, void *ctx) {
         /// 3. 通知 Observers: 即将触发 Source (非基于port的,Source0) 回调。
         __CFRUNLOOP_IS_CALLING_OUT_TO_AN_OBSERVER_CALLBACK_FUNCTION__(kCFRunLoopBeforeSources);
         __CFRUNLOOP_IS_CALLING_OUT_TO_A_BLOCK__(block);
- 
+ 是                                 
         /// 4. 触发 Source0 (非基于port的) 回调。
         __CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION__(source0);
         __CFRUNLOOP_IS_CALLING_OUT_TO_A_BLOCK__(block);
@@ -1352,8 +1332,6 @@ static void __CFRunLoopAddItemToCommonModes(const void *value, void *ctx) {
 在最开始介绍CFRunloop的时候就简单提了一下其中关于block的两个字段blocks_head，blocks_tail。并且也提到在runloop周期中会对此调用__CFRunLoopDoBlocks来执行加入到这个runloop的block。下面从源码来说明一下block如何与runloop结合的。
 
 先来看看最基本的block_item 数据结构，特别注意这里保存了runloop的model，决定了block是否应该执行。
-
-
 
 ```c
 struct _block_item {
@@ -1523,15 +1501,15 @@ CFSocket 是最底层的接口，只负责 socket 通信。
 
 ![img](https://upload-images.jianshu.io/upload_images/664334-4d5ca6982a692bc0..png?)
 
-image
-
 NSURLConnectionLoader 中的 RunLoop 通过一些基于 mach port 的 Source 接收来自底层 CFSocket 的通知。当收到通知后，其会在合适的时机向 CFMultiplexerSource 等 Source0 发送通知，同时唤醒 Delegate 线程的 RunLoop 来让其处理这些通知。CFMultiplexerSource 会在 Delegate 线程的 RunLoop 对 Delegate 执行实际的回调。
 
 
 
 ## Runloop在平时开发中的应用（[深入理解RunLoop](https://link.jianshu.com/?t=https%3A%2F%2Fblog.ibireme.com%2F2015%2F05%2F18%2Frunloop%2F)）
 
-### AFNetworking
+
+
+### 1、AFNetworking
 
 为了线程保活。
 代码：
@@ -1574,11 +1552,15 @@ AF希望能在后台线程接收 Delegate 回调。为此 AFNetworking 单独创
 
 当需要这个后台线程执行任务时，AFNetworking 通过调用 [NSObject performSelector:onThread:..] 将这个任务扔到了后台线程的 RunLoop 中，具体内容对应start方法。
 
-### UITableView+FDTemplateLayoutCell
+
+
+### 2、UITableView+FDTemplateLayoutCell
 
 利用runloop的空闲状态计算高度达到预缓存的功能。具体分析见这里[优化UITableViewCell高度计算的那些事](https://link.jianshu.com/?t=http%3A%2F%2Fblog.sunnyxx.com%2F2015%2F05%2F17%2Fcell-height-calculation%2F)
 
-### AsyncDisplayKit
+
+
+### 3、AsyncDisplayKit
 
 ASDK 仿照 QuartzCore/UIKit 框架的模式，实现了一套类似的界面更新的机制：即在主线程的 RunLoop 中添加一个 Observer，监听了 kCFRunLoopBeforeWaiting 和 kCFRunLoopExit 事件，在收到回调时，遍历所有之前放入队列的待处理的任务，然后一一执行。
 
