@@ -319,10 +319,8 @@ NSRunloop暴露给外界的接口
 
 
 > 下面提供了两套代码，简化版与非简化版，如果觉得非简化版代码太长可以直接看简化版的代码，他们所表达的含义是一样的。
-
-
-
-
+>
+> 
 
 ##### 简化版代码（来源于网上）
 
@@ -1017,7 +1015,7 @@ CF_EXPORT CFRunLoopRef _CFRunLoopGet0(pthread_t t) {
 - RunLoop 的销毁是发生在线程结束时。
 - 只能在一个线程的内部获取其 RunLoop（主线程除外），否则就这个Runloop就没有注册销毁回调。这一点是根据`pthread_equal(t, pthread_self())`后面的代码，如果是当前线程后面才会注册销毁回调。**因为上面讲过Runlopp暴露给外部的创建方式只有CFRunLoopGetMain() 和 CFRunLoopGetCurrent()两种，所以这种情况不用考虑。**下面是CFRunloop.h的头文件暴露接口，可以看到获取方式只有两种。
 
-![img](https://upload-images.jianshu.io/upload_images/664334-f35be006cb828f58.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/439/format/webp)
+![img](https://upload-images.jianshu.io/upload_images/664334-f35be006cb828f58.jpg?)
 
 #### Mode相关操作
 
@@ -1281,6 +1279,8 @@ static void __CFRunLoopAddItemToCommonModes(const void *value, void *ctx) {
 
 上面的记录可以从CFRunLoopSource结构体可以明确的知道。**CFRunLoopSource中有保存RunLoop对象的数组，而CFRunLoopObserver和CFRunLoopTimer只有单个RunLoop对象。**
 
+
+
 ### 小结
 
 以上内容是对runloop从源码角度的理解过程。由于代码比较多，看起来也费事，可以直接选择重点内容看。下面的内容主要来至于[深入理解RunLoop](https://link.jianshu.com/?t=https%3A%2F%2Fblog.ibireme.com%2F2015%2F05%2F18%2Frunloop%2F)这篇文章。毕竟这篇文章在国内来讲，是研究runloop文章中，国内写得非常有参考价值的文章。
@@ -1339,17 +1339,13 @@ static void __CFRunLoopAddItemToCommonModes(const void *value, void *ctx) {
 
 这里举个例子，如下debug信息：
 
-
-
-![img](https://upload-images.jianshu.io/upload_images/664334-94979e984762bb5e.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/570/format/webp)
+![img](https://upload-images.jianshu.io/upload_images/664334-94979e984762bb5e.jpg?)
 
 对应到上面的过程就是：**触发 Source0 (非基于port的) 回调。**
 
 下图是对主线程的runloop的中在kCFRunLoopDefaultMode模式下所有的observer的日志。
 
-
-
-![img](https://upload-images.jianshu.io/upload_images/664334-ddac29c5cbd56ccc.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/896/format/webp)
+![img](https://upload-images.jianshu.io/upload_images/664334-ddac29c5cbd56ccc.jpg?)
 
 ### Block
 
@@ -1368,8 +1364,6 @@ struct _block_item {
 ```
 
 在执行block的时候会传入
-
-
 
 ```c
 /**
@@ -1509,8 +1503,6 @@ NSTimer 其实就是 CFRunLoopTimerRef，他们之间是 toll-free bridged 的�
 
 iOS 中，关于网络请求的接口自下至上有如下几层:
 
-
-
 ```c
 CFSocket
 CFNetwork       ->ASIHttpRequest
@@ -1529,13 +1521,13 @@ CFSocket 是最底层的接口，只负责 socket 通信。
 
 当开始网络传输时，我们可以看到 NSURLConnection 创建了两个新线程：com.apple.NSURLConnectionLoader 和 com.apple.CFSocket.private。其中 CFSocket 线程是处理底层 socket 连接的。NSURLConnectionLoader 这个线程内部会使用 RunLoop 来接收底层 socket 的事件，并通过之前添加的 Source0 通知到上层的 Delegate。
 
-
-
-![img](https://upload-images.jianshu.io/upload_images/664334-4d5ca6982a692bc0..png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![img](https://upload-images.jianshu.io/upload_images/664334-4d5ca6982a692bc0..png?)
 
 image
 
 NSURLConnectionLoader 中的 RunLoop 通过一些基于 mach port 的 Source 接收来自底层 CFSocket 的通知。当收到通知后，其会在合适的时机向 CFMultiplexerSource 等 Source0 发送通知，同时唤醒 Delegate 线程的 RunLoop 来让其处理这些通知。CFMultiplexerSource 会在 Delegate 线程的 RunLoop 对 Delegate 执行实际的回调。
+
+
 
 ## Runloop在平时开发中的应用（[深入理解RunLoop](https://link.jianshu.com/?t=https%3A%2F%2Fblog.ibireme.com%2F2015%2F05%2F18%2Frunloop%2F)）
 
@@ -1543,8 +1535,6 @@ NSURLConnectionLoader 中的 RunLoop 通过一些基于 mach port 的 Source 接
 
 为了线程保活。
 代码：
-
-
 
 ```objective-c
 - (void)start {
@@ -1594,11 +1584,11 @@ ASDK 仿照 QuartzCore/UIKit 框架的模式，实现了一套类似的界面更
 
 可以直接看源码进行分析[AsyncDisplayKit](https://link.jianshu.com/?t=https%3A%2F%2Fgithub.com%2Ffacebookarchive%2FAsyncDisplayKit)，但是现在更名为[Texture](https://link.jianshu.com/?t=https%3A%2F%2Fgithub.com%2Ftexturegroup%2Ftexture%2F)
 
+
+
 # 扩展阅读
 
 [RunLoop官方介绍](https://link.jianshu.com/?t=https%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fcontent%2Fdocumentation%2FCocoa%2FConceptual%2FMultithreading%2FRunLoopManagement%2FRunLoopManagement.html%23%2Fapple_ref%2Fdoc%2Fuid%2F10000057i-CH16-SW23)
 [深入理解RunLoop](https://link.jianshu.com/?t=https%3A%2F%2Fblog.ibireme.com%2F2015%2F05%2F18%2Frunloop%2F)
-
-
 
 [客户端技术](https://www.jianshu.com/nb/3488959)
