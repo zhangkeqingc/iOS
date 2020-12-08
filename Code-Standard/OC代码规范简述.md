@@ -7,7 +7,7 @@
       1、为了代码整洁；
       2、为了自己阅读方便；
       3、为了他人阅读方便。
-      敲代码很简单，怎么能把简单的事做的专业，做的高大上! 那就要学会包装，格式、语法要整洁、规范。
+      敲代码很简单，怎么能把简单的事做的专业，做的高大上! 那就要学会包装，代码格式、语法要整洁、规范。
 
 参考资料：[苹果代码规范](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html#//apple_ref/doc/uid/10000146-SW1) 
 参考链接：https://www.jianshu.com/p/c85f4a0bba4d
